@@ -1,0 +1,38 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unittest:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+        os: [ubuntu-latest]
+        include:
+          # 3.9 is past end of life and setup-python can no longer provision it
+          # on ubuntu-latest. The code still supports it, so the claim is tested
+          # on the last image that ships the interpreter.
+          - python-version: '3.9'
+            os: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m unittest discover -s tests -v
+
+      # The controls are the product, so CI runs them through the CLI too.
+      - name: Controls pass through the command line
+        run: |
+          python -m guardlex selftest
+          python -m guardlex rules > /dev/null
+          echo "if (!current_user_can('edit_posts')) return;" | python -m guardlex check -
+          if echo 'echo $_GET["x"];' | python -m guardlex check -; then
+            echo "::error::an unguarded body must exit 1"
+            exit 1
+          fi

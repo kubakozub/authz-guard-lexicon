@@ -1,0 +1,30 @@
+[project]
+name = "authz-guard-lexicon"
+version = "1.0.0"
+description = "What counts as an authorization check in five languages, and the false positive behind each rule"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "Jakub Kozub" }]
+keywords = ["security", "appsec", "static-analysis", "authorization", "access-control", "bug-bounty"]
+classifiers = [
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+]
+dependencies = []
+
+[project.scripts]
+authz-guard-lexicon = "guardlex.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/kubakozub/authz-guard-lexicon"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["guardlex"]
